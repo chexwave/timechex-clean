@@ -2,8 +2,10 @@ import { store } from './src/store.js';
 import { MOCK_JOBS, MOCK_CUSTOMERS } from './src/mock-data.js';
 
 let selectedId = null;
+let currentView = 'punch';
 let timerStart = null;
 let timerInterval = null;
+let editingPunch = null;
 
 const timelineEl = document.getElementById('timeline');
 const cardEl = document.getElementById('punch-card');
@@ -14,11 +16,15 @@ const dateEl = document.getElementById('date');
 const clockEl = document.getElementById('clock');
 const jobSub = document.getElementById('job-sub');
 const modal = document.getElementById('modal');
+const editModal = document.getElementById('edit-modal');
+const ticketContent = document.getElementById('ticket-content');
 
 const btnJob = document.getElementById('btn-job');
 const btnBreak = document.getElementById('btn-break');
 const btnDrive = document.getElementById('btn-drive');
 const btnOops = document.getElementById('btn-oops');
+const btnUndo = document.getElementById('btn-undo');
+const btnExport = document.getElementById('btn-export');
 
 function getJobLabel(wo) {
   const job = MOCK_JOBS.find(j => j.number === wo);
@@ -29,8 +35,8 @@ function getJobLabel(wo) {
 
 function updateClock() {
   const now = new Date();
-  clockEl.textContent = now.toTimeString().slice(0, 5);
-  dateEl.textContent = now.toISOString().slice(0, 10);
+  if (clockEl) clockEl.textContent = now.toTimeString().slice(0, 5);
+  if (dateEl) dateEl.textContent = now.toISOString().slice(0, 10);
 }
 
 function startTimer() {
@@ -41,13 +47,13 @@ function startTimer() {
     const h = String(Math.floor(secs / 3600)).padStart(2, '0');
     const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
     const s = String(secs % 60).padStart(2, '0');
-    timerEl.textContent = `${h}:${m}:${s}`;
+    if (timerEl) timerEl.textContent = `${h}:${m}:${s}`;
   }, 1000);
 }
 
 function stopTimer() {
   if (timerInterval) clearInterval(timerInterval);
-  timerEl.textContent = '00:00:00';
+  if (timerEl) timerEl.textContent = '00:00:00';
 }
 
 function updateStatus() {
@@ -55,36 +61,47 @@ function updateStatus() {
   if (t === 'job') {
     statusEl.textContent = 'On the job';
     statusText.textContent = 'On the job · Rivera';
-    jobSub.textContent = 'On the job · Rivera · since now';
+    if (jobSub) jobSub.textContent = 'On the job · Rivera · since now';
     startTimer();
   } else if (t === 'break') {
     statusEl.textContent = 'On break';
     statusText.textContent = 'On break';
-    jobSub.textContent = 'On break';
+    if (jobSub) jobSub.textContent = 'On break';
     startTimer();
   } else if (t === 'drive') {
     statusEl.textContent = 'Driving';
     statusText.textContent = 'Driving';
-    jobSub.textContent = 'Driving';
+    if (jobSub) jobSub.textContent = 'Driving';
     startTimer();
   } else {
     statusEl.textContent = 'Ready';
     statusText.textContent = 'Ready';
-    jobSub.textContent = 'No active job';
+    if (jobSub) jobSub.textContent = 'No active job';
     stopTimer();
   }
 
-  btnJob.innerHTML = t === 'job' ? 'STOP<br>JOB' : 'START<br>JOB';
-  btnJob.classList.toggle('active', t === 'job');
-  btnBreak.innerHTML = t === 'break' ? 'STOP<br>BREAK' : 'START<br>BREAK';
-  btnBreak.classList.toggle('active', t === 'break');
-  btnDrive.innerHTML = t === 'drive' ? 'STOP<br>DRIVE' : 'START<br>DRIVE';
-  btnDrive.classList.toggle('active', t === 'drive');
+  if (btnJob) {
+    btnJob.innerHTML = t === 'job' ? 'STOP<br>JOB' : 'START<br>JOB';
+    btnJob.classList.toggle('active', t === 'job');
+  }
+  if (btnBreak) {
+    btnBreak.innerHTML = t === 'break' ? 'STOP<br>BREAK' : 'START<br>BREAK';
+    btnBreak.classList.toggle('active', t === 'break');
+  }
+  if (btnDrive) {
+    btnDrive.innerHTML = t === 'drive' ? 'STOP<br>DRIVE' : 'START<br>DRIVE';
+    btnDrive.classList.toggle('active', t === 'drive');
+  }
 }
 
 function toggle(type, startLabel, stopLabel) {
   if (store.state.activeType === type) {
-    store.addPunch(stopLabel);
+    let extra = {};
+    if (type === 'drive') {
+      const miles = prompt('Distance (miles) for this drive?', '0');
+      extra.distance = parseFloat(miles) || 0;
+    }
+    store.addPunch(stopLabel, extra);
     store.state.activeType = null;
   } else {
     if (store.state.activeType) {
@@ -98,11 +115,11 @@ function toggle(type, startLabel, stopLabel) {
   render();
 }
 
-btnJob.onclick = () => toggle('job', 'Start Job', 'Stop Job');
-btnBreak.onclick = () => toggle('break', 'Start Break', 'Stop Break');
-btnDrive.onclick = () => toggle('drive', 'Start Drive', 'Stop Drive');
+if (btnJob) btnJob.onclick = () => toggle('job', 'Start Job', 'Stop Job');
+if (btnBreak) btnBreak.onclick = () => toggle('break', 'Start Break', 'Stop Break');
+if (btnDrive) btnDrive.onclick = () => toggle('drive', 'Start Drive', 'Stop Drive');
 
-btnOops.onclick = () => {
+if (btnOops) btnOops.onclick = () => {
   document.getElementById('oops-time').value = new Date().toTimeString().slice(0, 5);
   const jobSelect = document.getElementById('oops-job');
   jobSelect.innerHTML = MOCK_JOBS.map(j => `<option value="${j.number}">${getJobLabel(j.number)}</option>`).join('');
@@ -116,12 +133,46 @@ document.getElementById('oops-save').onclick = () => {
   const wo = document.getElementById('oops-job').value;
   const notes = document.getElementById('oops-notes').value;
   const parts = document.getElementById('oops-parts').value.split(',').map(p => p.trim()).filter(Boolean);
-  store.addPunch(type, { time, wo, notes, parts });
+  const distance = parseFloat(document.getElementById('oops-distance').value) || 0;
+  store.addPunch(type, { time, wo, notes, parts, distance });
   modal.classList.add('hidden');
   render();
 };
 
+function openEdit(punch) {
+  editingPunch = punch;
+  document.getElementById('edit-time').value = punch.time;
+  document.getElementById('edit-type').value = punch.type;
+  const jobSelect = document.getElementById('edit-job');
+  jobSelect.innerHTML = MOCK_JOBS.map(j => `<option value="${j.number}" ${j.number === punch.wo ? 'selected' : ''}>${getJobLabel(j.number)}</option>`).join('');
+  document.getElementById('edit-notes').value = punch.notes || '';
+  document.getElementById('edit-parts').value = (punch.parts || []).join(', ');
+  document.getElementById('edit-distance').value = punch.distance || 0;
+  editModal.classList.remove('hidden');
+}
+
+document.getElementById('edit-cancel').onclick = () => editModal.classList.add('hidden');
+document.getElementById('edit-save').onclick = () => {
+  if (!editingPunch) return;
+  editingPunch.time = document.getElementById('edit-time').value;
+  editingPunch.type = document.getElementById('edit-type').value;
+  editingPunch.wo = document.getElementById('edit-job').value;
+  editingPunch.notes = document.getElementById('edit-notes').value;
+  editingPunch.parts = document.getElementById('edit-parts').value.split(',').map(p => p.trim()).filter(Boolean);
+  editingPunch.distance = parseFloat(document.getElementById('edit-distance').value) || 0;
+  store.rebuildSheets();
+  store.persist();
+  editModal.classList.add('hidden');
+  render();
+};
+
+if (btnUndo) btnUndo.onclick = () => {
+  if (store.undo()) render();
+  else alert('Nothing to undo');
+};
+
 function renderTimeline() {
+  if (!timelineEl) return;
   const todays = store.getTodayPunches().slice().reverse();
   timelineEl.innerHTML = todays.map(p => {
     let cls = 'job';
@@ -140,15 +191,52 @@ function renderTimeline() {
   });
 }
 
-function renderRanges(iso) {
-  const sheet = store.state.sheets.find(s => s.iso === iso);
-  if (!sheet || !sheet.ranges.length) return '<div class="ranges">No closed ranges yet</div>';
-  return `<div class="ranges">${sheet.ranges.map(r =>
-    `<div>${r.start}–${r.end} · ${r.type}</div>`
-  ).join('')}</div>`;
+function calcDuration(start, end) {
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  return ((eh * 60 + em) - (sh * 60 + sm)) / 60;
 }
 
+function renderTicket() {
+  if (!ticketContent) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const sheet = store.state.sheets.find(s => s.iso === today);
+  if (!sheet || !sheet.ranges.length) {
+    ticketContent.innerHTML = '<p>No closed ranges yet. Punch a full Start/Stop cycle on the Punch screen.</p>';
+    return;
+  }
+  let totalMain = 0, totalBreak = 0, totalDrive = 0;
+  const rows = sheet.ranges.map(r => {
+    const hrs = calcDuration(r.start, r.end).toFixed(2);
+    if (r.type === 'main') totalMain += parseFloat(hrs);
+    else if (r.type === 'break') totalBreak += parseFloat(hrs);
+    else if (r.type === 'drive') totalDrive += parseFloat(hrs);
+    return `<div class="range-row"><strong>${r.start}–${r.end}</strong> · ${r.type} · ${hrs}h · ${r.wo || ''} ${r.note ? ' · ' + r.note : ''}</div>`;
+  }).join('');
+  ticketContent.innerHTML = `
+    <h3>Ranges for ${today}</h3>
+    ${rows}
+    <div class="totals">Main: ${totalMain.toFixed(2)}h · Break: ${totalBreak.toFixed(2)}h · Drive: ${totalDrive.toFixed(2)}h</div>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-top:0.5rem">Export includes punch IDs for CRM attach later.</p>
+  `;
+}
+
+if (btnExport) btnExport.onclick = () => {
+  const today = new Date().toISOString().slice(0, 10);
+  const punches = store.getTodayPunches();
+  const sheet = store.state.sheets.find(s => s.iso === today);
+  const exportData = {
+    date: today,
+    punches: punches.map(p => ({ id: p.id, time: p.time, type: p.type, wo: p.wo, notes: p.notes, parts: p.parts, distance: p.distance })),
+    ranges: sheet?.ranges || [],
+    note: 'Clean timesheet for CRM attach by punch ID or WO'
+  };
+  const text = JSON.stringify(exportData, null, 2);
+  navigator.clipboard.writeText(text).then(() => alert('Timesheet JSON copied to clipboard!')).catch(() => alert(text));
+};
+
 function renderCard() {
+  if (!cardEl) return;
   const todays = store.getTodayPunches();
   const current = todays.slice(-1)[0];
   const selected = store.state.punches.find(p => p.id === selectedId);
@@ -161,17 +249,10 @@ function renderCard() {
       <p>${getJobLabel(selected.wo)}</p>
       <p>Parts: ${(selected.parts || []).join(', ') || 'none'}</p>
       <p>Notes: ${selected.notes || 'none'}</p>
+      ${selected.distance ? `<p>Distance: ${selected.distance} mi</p>` : ''}
       <button id="edit-selected" style="margin-top:0.5rem;padding:0.4rem 0.8rem;border-radius:8px;border:none;background:#334155;color:#fff">Edit</button>
     `;
-    document.getElementById('edit-selected').onclick = () => {
-      const newTime = prompt('New time (HH:MM)', selected.time);
-      if (newTime) {
-        selected.time = newTime;
-        store.rebuildSheets();
-        store.persist();
-        render();
-      }
-    };
+    document.getElementById('edit-selected').onclick = () => openEdit(selected);
   } else if (current) {
     cardEl.innerHTML = `
       <h3>Current Punch</h3>
@@ -179,7 +260,8 @@ function renderCard() {
       <p>${getJobLabel(current.wo)}</p>
       <p>Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Part</button></p>
       <p>Notes: ${current.notes || 'none'} <button id="add-note" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Note</button></p>
-      ${renderRanges(today)}
+      ${current.distance ? `<p>Distance: ${current.distance} mi</p>` : ''}
+      <div class="ranges">${store.state.sheets.find(s => s.iso === today)?.ranges.map(r => `<div>${r.start}–${r.end} · ${r.type}</div>`).join('') || 'No closed ranges yet'}</div>
     `;
     document.getElementById('add-part').onclick = () => {
       const part = prompt('Part?');
@@ -203,11 +285,29 @@ function renderCard() {
   }
 }
 
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById(`view-${view}`);
+  if (target) target.classList.remove('hidden');
+  document.querySelectorAll('nav span').forEach(s => s.classList.toggle('active', s.dataset.view === view));
+  render();
+}
+
+document.querySelectorAll('nav span').forEach(span => {
+  span.onclick = () => switchView(span.dataset.view);
+});
+
 function render() {
   updateClock();
-  renderTimeline();
-  renderCard();
-  updateStatus();
+  if (currentView === 'punch') {
+    renderTimeline();
+    renderCard();
+    updateStatus();
+  } else if (currentView === 'ticket') {
+    renderTicket();
+  }
+  // month/summary are static for now
 }
 
 if (store.state.punches.length === 0) {
@@ -219,4 +319,5 @@ if (store.state.punches.length === 0) {
 }
 
 setInterval(updateClock, 10000);
+switchView('punch');
 render();
