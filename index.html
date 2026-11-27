@@ -12,6 +12,12 @@
     <div class="status" id="status">Ready</div>
   </header>
 
+  <div class="status-bar" id="status-bar">
+    <span class="dot-live"></span>
+    <span id="status-text">Ready</span>
+    <span id="timer">00:00:00</span>
+  </div>
+
   <main>
     <aside class="timeline" id="timeline"></aside>
 
@@ -20,17 +26,22 @@
         <div>
           <div class="label">EMPLOYEE</div>
           <div class="name">Michael</div>
+          <div class="sub" id="job-sub">No active job</div>
         </div>
-        <div class="date" id="date"></div>
+        <div class="date-block">
+          <div class="label">DATE</div>
+          <div class="date" id="date"></div>
+          <div class="clock" id="clock"></div>
+        </div>
       </div>
 
       <div id="punch-card" class="card"></div>
 
       <div class="actions">
-        <button id="btn-job" class="action">START JOB</button>
-        <button id="btn-break" class="action">START BREAK</button>
-        <button id="btn-drive" class="action">START DRIVE</button>
-        <button id="btn-oops" class="action oops">OOPS PUNCH</button>
+        <button id="btn-job" class="action ring">START<br>JOB</button>
+        <button id="btn-break" class="action ring">START<br>BREAK</button>
+        <button id="btn-drive" class="action ring">START<br>DRIVE</button>
+        <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
       </div>
     </section>
   </main>
@@ -42,7 +53,6 @@
     <span>Summary</span>
   </nav>
 
-  <!-- Oops Punch Modal -->
   <div id="modal" class="modal hidden">
     <div class="modal-content">
       <h3>Oops Punch</h3>
@@ -57,11 +67,9 @@
           <option>Stop Drive</option>
         </select>
       </label>
-      <label>Job
-        <select id="oops-job"></select>
-      </label>
+      <label>Job <select id="oops-job"></select></label>
       <label>Notes <textarea id="oops-notes" rows="2"></textarea></label>
-      <label>Parts <input id="oops-parts" placeholder="part numbers, comma separated"></label>
+      <label>Parts <input id="oops-parts" placeholder="part numbers"></label>
       <div class="modal-actions">
         <button id="oops-cancel">Cancel</button>
         <button id="oops-save" class="primary">Add Punch</button>
