@@ -18,16 +18,26 @@ const modal = document.getElementById('modal');
 const editModal = document.getElementById('edit-modal');
 const ticketContent = document.getElementById('ticket-content');
 const todayLog = document.getElementById('today-log');
+const toastEl = document.getElementById('toast');
 
 const btnJob = document.getElementById('btn-job');
 const btnBreak = document.getElementById('btn-break');
 const btnDrive = document.getElementById('btn-drive');
 const btnOops = document.getElementById('btn-oops');
 const btnExport = document.getElementById('btn-export');
+const btnAddPart = document.getElementById('btn-add-part');
+const btnAddNote = document.getElementById('btn-add-note');
 
 const helperJob = document.getElementById('helper-job');
 const helperBreak = document.getElementById('helper-break');
 const helperDrive = document.getElementById('helper-drive');
+
+function showToast(msg) {
+  if (!toastEl) return;
+  toastEl.textContent = msg;
+  toastEl.classList.remove('hidden');
+  setTimeout(() => toastEl.classList.add('hidden'), 2500);
+}
 
 function getJobLabel(wo) {
   const job = MOCK_JOBS.find(j => j.number === wo);
@@ -251,6 +261,36 @@ if (btnExport) btnExport.onclick = () => {
   navigator.clipboard.writeText(text).then(() => alert('Timesheet JSON copied to clipboard!')).catch(() => alert(text));
 };
 
+function getCurrentPunch() {
+  const todays = store.getTodayPunches();
+  return todays.slice(-1)[0];
+}
+
+if (btnAddPart) btnAddPart.onclick = () => {
+  const current = getCurrentPunch();
+  if (!current) return alert('No active punch');
+  const part = prompt('Part?');
+  if (part) {
+    current.parts = current.parts || [];
+    current.parts.push(part);
+    store.persist();
+    showToast(`${part} added`);
+    render();
+  }
+};
+
+if (btnAddNote) btnAddNote.onclick = () => {
+  const current = getCurrentPunch();
+  if (!current) return alert('No active punch');
+  const note = prompt('Note?');
+  if (note) {
+    current.notes = (current.notes ? current.notes + '\n' : '') + note;
+    store.persist();
+    showToast('Note added');
+    render();
+  }
+};
+
 function renderCard() {
   if (!cardEl) return;
   const todays = store.getTodayPunches();
@@ -273,27 +313,10 @@ function renderCard() {
       <h3>Current Punch</h3>
       <div class="punch-time">${current.time}<span class="punch-type">${current.type}</span></div>
       <div class="punch-meta">${getJobLabel(current.wo)}</div>
-      <div class="punch-row">Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part">+ Part</button></div>
-      <div class="punch-row">Notes: ${current.notes || 'none'} <button id="add-note">+ Note</button></div>
+      <div class="punch-row">Parts: ${(current.parts || []).join(', ') || 'none'}</div>
+      <div class="punch-row">Notes: ${current.notes || 'none'}</div>
       ${current.distance ? `<div class="punch-row">Distance: ${current.distance} mi</div>` : ''}
     `;
-    document.getElementById('add-part').onclick = () => {
-      const part = prompt('Part?');
-      if (part) {
-        current.parts = current.parts || [];
-        current.parts.push(part);
-        store.persist();
-        render();
-      }
-    };
-    document.getElementById('add-note').onclick = () => {
-      const note = prompt('Note?');
-      if (note) {
-        current.notes = (current.notes ? current.notes + '\n' : '') + note;
-        store.persist();
-        render();
-      }
-    };
   } else {
     cardEl.innerHTML = '<h3>No active punch</h3><p>Hit a ring to start.</p>';
   }
