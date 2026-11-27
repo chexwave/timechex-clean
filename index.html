@@ -2,62 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TimeChex — Punch Demo</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 1rem; }
-    .rings { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 400px; margin: 1rem auto; }
-    .ring { width: 140px; height: 140px; border-radius: 50%; border: 8px solid #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; cursor: pointer; user-select: none; }
-    .start { border-color: #22c55e; background: #14532d; }
-    .stop { border-color: #ef4444; background: #7f1d1d; }
-    .log { max-width: 500px; margin: 1rem auto; }
-    .punch { padding: 0.5rem; border-bottom: 1px solid #334155; font-family: monospace; }
-    h1 { text-align: center; letter-spacing: 0.1em; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TimeChex</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>TIMEC HEX</h1>
-  <p style="text-align:center">Mock punch flow — punch ID is the attachment key</p>
+  <header>
+    <h1>Time<span>Chex</span></h1>
+    <div class="status" id="status">Ready</div>
+  </header>
 
-  <div class="rings">
-    <div class="ring start" onclick="punch('Start Job')">START<br>JOB</div>
-    <div class="ring stop" onclick="punch('Stop Job')">STOP<br>JOB</div>
-    <div class="ring start" onclick="punch('Start Break')">START<br>BREAK</div>
-    <div class="ring stop" onclick="punch('End Break')">END<br>BREAK</div>
+  <main>
+    <aside class="timeline" id="timeline"></aside>
+
+    <section class="content">
+      <div class="employee">
+        <div>
+          <div class="label">EMPLOYEE</div>
+          <div class="name">Michael</div>
+        </div>
+        <div class="date" id="date"></div>
+      </div>
+
+      <div id="punch-card" class="card"></div>
+
+      <div class="actions">
+        <button id="btn-job" class="action">START JOB</button>
+        <button id="btn-break" class="action">START BREAK</button>
+        <button id="btn-drive" class="action">START DRIVE</button>
+        <button id="btn-oops" class="action oops">OOPS PUNCH</button>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <span class="active">Punch</span>
+    <span>Ticket</span>
+    <span>Month</span>
+    <span>Summary</span>
+  </nav>
+
+  <!-- Oops Punch Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Oops Punch</h3>
+      <label>Time <input type="time" id="oops-time"></label>
+      <label>Type
+        <select id="oops-type">
+          <option>Start Job</option>
+          <option>Stop Job</option>
+          <option>Start Break</option>
+          <option>Stop Break</option>
+          <option>Start Drive</option>
+          <option>Stop Drive</option>
+        </select>
+      </label>
+      <label>Job
+        <select id="oops-job"></select>
+      </label>
+      <label>Notes <textarea id="oops-notes" rows="2"></textarea></label>
+      <label>Parts <input id="oops-parts" placeholder="part numbers, comma separated"></label>
+      <div class="modal-actions">
+        <button id="oops-cancel">Cancel</button>
+        <button id="oops-save" class="primary">Add Punch</button>
+      </div>
+    </div>
   </div>
 
-  <div class="log" id="log"></div>
-
-  <script type="module">
-    import { generatePunchId, MOCK_CUSTOMERS, MOCK_JOBS, LABOR_RATES } from './src/mock-data.js';
-
-    const log = document.getElementById('log');
-    const punches = JSON.parse(localStorage.getItem('timechex-punches') || '[]');
-
-    function render() {
-      log.innerHTML = punches.slice().reverse().map(p =>
-        `<div class="punch">${p.time} · ${p.type} · <strong>${p.id}</strong> · ${p.wo || 'unattached'}</div>`
-      ).join('') || '<p style="text-align:center">No punches yet. Hit a ring.</p>';
-    }
-
-    window.punch = (type) => {
-      const now = new Date();
-      const punch = {
-        id: generatePunchId(now),
-        iso: now.toISOString().slice(0,10),
-        time: now.toTimeString().slice(0,5),
-        type,
-        wo: MOCK_JOBS[0].number,
-        customer: MOCK_CUSTOMERS[0].name,
-        attached: false
-      };
-      punches.push(punch);
-      localStorage.setItem('timechex-punches', JSON.stringify(punches));
-      render();
-    };
-
-    render();
-    console.log('Rates locked:', LABOR_RATES);
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
