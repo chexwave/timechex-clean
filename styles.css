@@ -15,6 +15,7 @@ header {
   padding: 0.6rem 1rem;
   background: #0f172a;
   flex-shrink: 0;
+  box-shadow: 0 1px 0 #1e293b;
 }
 h1 { margin: 0; font-size: 1.5rem; letter-spacing: -0.02em; }
 h1 span { color: #ef4444; }
@@ -26,6 +27,7 @@ h1 span { color: #ef4444; }
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
   letter-spacing: 0.04em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .status-bar {
   display: flex;
@@ -36,19 +38,21 @@ h1 span { color: #ef4444; }
   font-size: 0.9rem;
   flex-shrink: 0;
   border-bottom: 1px solid #1e293b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
 }
 .dot-live {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 6px #22c55e;
+  box-shadow: 0 0 8px #22c55e;
 }
 main {
   flex: 1;
   position: relative;
   min-height: 0;
   overflow: hidden;
+  background: #0a0e17;
 }
 [id^="view-"] {
   position: absolute;
@@ -57,8 +61,8 @@ main {
 }
 #view-punch:not(.hidden) {
   display: flex;
-  gap: 0.4rem;
-  padding: 0.4rem 0.4rem 0 0.4rem;
+  gap: 0.55rem;
+  padding: 0.55rem;
 }
 #view-ticket:not(.hidden),
 #view-month:not(.hidden),
@@ -69,17 +73,18 @@ main {
   display: none !important;
 }
 .timeline {
-  width: 88px;
-  background: #111827;
-  border-radius: 12px;
+  width: 86px;
+  background: linear-gradient(180deg, #151c2c 0%, #111827 100%);
+  border-radius: 14px;
   overflow-y: auto;
-  padding: 0.6rem 0.3rem;
+  padding: 0.7rem 0.35rem;
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
   align-items: center;
   flex-shrink: 0;
-  margin-top: 0.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  border: 1px solid #1e293b;
 }
 .legend {
   display: flex;
@@ -104,9 +109,9 @@ main {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.lg.job::before { background: #22c55e; }
-.lg.break::before { background: #eab308; }
-.lg.drive::before { background: #3b82f6; }
+.lg.job::before { background: #22c55e; box-shadow: 0 0 4px #22c55e; }
+.lg.break::before { background: #eab308; box-shadow: 0 0 4px #eab308; }
+.lg.drive::before { background: #3b82f6; box-shadow: 0 0 4px #3b82f6; }
 .dot {
   width: 16px;
   height: 16px;
@@ -115,6 +120,7 @@ main {
   position: relative;
   cursor: pointer;
   flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 .dot.job { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
 .dot.break { background: #eab308; box-shadow: 0 0 6px #eab308; }
@@ -124,7 +130,7 @@ main {
   transform: scale(1.25);
 }
 .dot.current {
-  box-shadow: 0 0 0 3px #111827, 0 0 0 5px currentColor;
+  box-shadow: 0 0 0 3px #151c2c, 0 0 0 5px currentColor;
 }
 .dot .time {
   position: absolute;
@@ -137,15 +143,16 @@ main {
 }
 .content {
   flex: 1;
-  padding: 0.5rem 0.6rem;
+  padding: 0.65rem 0.7rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
   overflow-y: auto;
   min-width: 0;
   background: #0f172a;
-  border-radius: 12px;
-  margin-top: 0.2rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  border: 1px solid #1e293b;
 }
 .employee {
   display: flex;
@@ -158,19 +165,22 @@ main {
 .date-block {
   text-align: right;
   background: #1e293b;
-  padding: 0.4rem 0.6rem;
-  border-radius: 8px;
-  min-width: 90px;
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  min-width: 92px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .date { font-weight: 600; font-size: 0.85rem; }
 .clock { font-size: 0.75rem; color: #94a3b8; }
 .card {
   background: #1e293b;
-  border-radius: 12px;
-  padding: 0.9rem;
+  border-radius: 14px;
+  padding: 0.95rem;
   flex: 1;
   min-height: 110px;
   overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+  border: 1px solid #334155;
 }
 .card h3 {
   margin: 0 0 0.5rem;
@@ -195,6 +205,7 @@ main {
   font-weight: 600;
   margin-left: 0.4rem;
   vertical-align: middle;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .punch-meta {
   font-size: 0.8rem;
@@ -215,6 +226,7 @@ main {
   background: #334155;
   color: #fff;
   font-size: 0.7rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 .ranges {
   margin-top: 0.5rem;
@@ -272,10 +284,11 @@ main {
   justify-content: center;
   text-align: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .action.ring.active {
   border-color: #ef4444;
-  box-shadow: 0 0 12px #ef4444;
+  box-shadow: 0 0 16px #ef4444, 0 4px 8px rgba(0,0,0,0.4);
   background: #7f1d1d;
 }
 .action.ring.oops {
@@ -311,6 +324,7 @@ nav {
   background: #0f172a;
   border-top: 1px solid #1e293b;
   flex-shrink: 0;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.25);
 }
 nav span { font-size: 0.65rem; color: #64748b; cursor: pointer; }
 nav .active { color: #fff; font-weight: 600; }
@@ -333,6 +347,7 @@ nav .active { color: #fff; font-weight: 600; }
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
 }
 .modal-content label { display: flex; flex-direction: column; font-size: 0.72rem; gap: 0.18rem; }
 .modal-content input, .modal-content select, .modal-content textarea {
