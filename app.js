@@ -171,8 +171,8 @@ document.getElementById('edit-save').onclick = () => {
 
 function renderTimeline() {
   if (!timelineEl) return;
-  const todays = store.getTodayPunches().slice(); // oldest first
-  const current = todays[todays.length - 1]; // newest is last
+  const todays = store.getTodayPunches().slice();
+  const current = todays[todays.length - 1];
   const legend = `<div class="legend">
     <span class="lg job">Job</span>
     <span class="lg break">Break</span>
@@ -260,22 +260,22 @@ function renderCard() {
   if (selected && selected.id !== current?.id) {
     cardEl.innerHTML = `
       <h3>Selected Punch</h3>
-      <p><strong>${selected.time}</strong> · ${selected.type}</p>
-      <p>${getJobLabel(selected.wo)}</p>
-      <p>Parts: ${(selected.parts || []).join(', ') || 'none'}</p>
-      <p>Notes: ${selected.notes || 'none'}</p>
-      ${selected.distance ? `<p>Distance: ${selected.distance} mi</p>` : ''}
+      <div class="punch-time">${selected.time}<span class="punch-type">${selected.type}</span></div>
+      <div class="punch-meta">${getJobLabel(selected.wo)}</div>
+      <div class="punch-row">Parts: ${(selected.parts || []).join(', ') || 'none'}</div>
+      <div class="punch-row">Notes: ${selected.notes || 'none'}</div>
+      ${selected.distance ? `<div class="punch-row">Distance: ${selected.distance} mi</div>` : ''}
       <button id="edit-selected" style="margin-top:0.5rem;padding:0.4rem 0.8rem;border-radius:8px;border:none;background:#334155;color:#fff">Edit</button>
     `;
     document.getElementById('edit-selected').onclick = () => openEdit(selected);
   } else if (current) {
     cardEl.innerHTML = `
       <h3>Current Punch</h3>
-      <p><strong>${current.time}</strong> · ${current.type}</p>
-      <p>${getJobLabel(current.wo)}</p>
-      <p>Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Part</button></p>
-      <p>Notes: ${current.notes || 'none'} <button id="add-note" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Note</button></p>
-      ${current.distance ? `<p>Distance: ${current.distance} mi</p>` : ''}
+      <div class="punch-time">${current.time}<span class="punch-type">${current.type}</span></div>
+      <div class="punch-meta">${getJobLabel(current.wo)}</div>
+      <div class="punch-row">Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part">+ Part</button></div>
+      <div class="punch-row">Notes: ${current.notes || 'none'} <button id="add-note">+ Note</button></div>
+      ${current.distance ? `<div class="punch-row">Distance: ${current.distance} mi</div>` : ''}
     `;
     document.getElementById('add-part').onclick = () => {
       const part = prompt('Part?');
@@ -324,7 +324,6 @@ function render() {
   }
 }
 
-// Clean chronological seed (only if empty)
 if (store.state.punches.length === 0) {
   store.addPunch('Start Job', { time: '08:15' });
   store.addPunch('Stop Job', { time: '09:30' });
