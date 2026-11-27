@@ -1,23 +1,19 @@
 # TimeChex Clean
 
-Interactive Punch screen for American Outboard Motors.
+Interactive Punch screen with core timesheet engine ported from TimeChex-v2.
 
-**Live concept:** Vertical timeline of timestamp dots + Current/Selected Punch cards + always-visible toggle action buttons.
+**What’s live**
+- Vertical timeline of timestamp dots
+- Current Punch / Selected Punch cards
+- Toggle buttons: Start/Stop Job, Start/Stop Break, Start/Stop Drive, Oops Punch
+- Core store (`src/store.js`): punches, sheets, range rebuild, undo stack, localStorage
+- Punch IDs (food+animal+MMDD), mock jobs/customers, labor rates
 
-## Features built
-- Vertical left timeline (dots = timestamps)
-- **Current Punch** card (active): timestamp, job, parts (+add), notes (+add)
-- **Selected Punch** card (other dots): summary + Edit
-- Four always-on buttons that toggle:
-  - Start Job ↔ Stop Job
-  - Start Break ↔ Stop Break
-  - Start Drive ↔ Stop Drive (logged as Service with time + distance)
-  - Oops Punch (popup for Time, Type, Job, Notes, Parts)
-- Mock data, punch IDs (food+animal+MMDD), localStorage
+**How it works**
+Punches are the atoms. The store rebuilds daily sheets and time ranges (main / break / drive) from the sequence of Start/Stop punches. Selected punches can be edited. Undo restores the previous state.
 
-## Run
-Open `index.html` locally or enable GitHub Pages (Settings → Pages → main branch / root).
+Open `index.html` or enable GitHub Pages.
 
 https://github.com/chexwave/timechex-clean
 
-Next: full edit menu for Selected Punch, distance capture on Drive, timesheet export.
+Next: full edit menu, distance on Drive, timesheet export by punch ID for CRM.
