@@ -44,6 +44,12 @@ main {
   flex: 1;
   display: flex;
   min-height: 0;
+  overflow: hidden;
+}
+#view-punch {
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 .timeline {
   width: 100px;
@@ -115,6 +121,16 @@ main {
   padding: 0.3rem 0;
   border-bottom: 1px solid #334155;
 }
+.range-row {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #334155;
+  font-size: 0.9rem;
+}
+.totals {
+  margin-top: 0.8rem;
+  font-weight: 600;
+  color: #86efac;
+}
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -153,7 +169,7 @@ nav {
   background: #0f172a;
   border-top: 1px solid #1e293b;
 }
-nav span { font-size: 0.75rem; color: #64748b; }
+nav span { font-size: 0.75rem; color: #64748b; cursor: pointer; }
 nav .active { color: #fff; font-weight: 600; }
 .modal {
   position: fixed;
@@ -186,4 +202,5 @@ nav .active { color: #fff; font-weight: 600; }
 .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem; }
 .modal-actions button { padding: 0.5rem 1rem; border-radius: 8px; border: none; background: #334155; color: #fff; }
 .modal-actions .primary { background: #2563eb; }
+.hidden { display: none !important; }
 button { font-family: inherit; }
