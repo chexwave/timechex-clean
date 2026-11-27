@@ -92,10 +92,19 @@ function renderTimeline() {
   });
 }
 
+function renderRanges(iso) {
+  const sheet = store.state.sheets.find(s => s.iso === iso);
+  if (!sheet || !sheet.ranges.length) return '<div class="ranges">No closed ranges yet</div>';
+  return `<div class="ranges">${sheet.ranges.map(r =>
+    `<div>${r.start}–${r.end} · ${r.type}</div>`
+  ).join('')}</div>`;
+}
+
 function renderCard() {
   const todays = store.getTodayPunches();
   const current = todays.slice(-1)[0];
   const selected = store.state.punches.find(p => p.id === selectedId);
+  const today = new Date().toISOString().slice(0, 10);
 
   if (selected && selected !== current) {
     cardEl.innerHTML = `
@@ -127,7 +136,7 @@ function renderCard() {
       <p>Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part">+ Part</button></p>
       <p>Notes: ${current.notes || 'none'} <button id="add-note">+ Note</button></p>
       <button id="undo-btn">Undo</button>
-      <p style="font-size:0.8rem;color:#94a3b8;margin-top:0.5rem">Ranges built: ${store.state.sheets.find(s => s.iso === current.iso)?.ranges.length || 0}</p>
+      ${renderRanges(today)}
     `;
     document.getElementById('add-part').onclick = () => {
       const part = prompt('Part number or name?');
@@ -166,6 +175,7 @@ function render() {
 // initial seed if empty
 if (store.state.punches.length === 0) {
   store.addPunch('Start Job', { time: '09:15' });
+  store.addPunch('Stop Job', { time: '11:30' });
   store.addPunch('Start Break', { time: '12:00' });
   store.state.activeType = 'break';
   store.persist();
