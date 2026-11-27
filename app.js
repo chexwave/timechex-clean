@@ -103,7 +103,7 @@ function updateStatus() {
   }
 
   if (helperJob) helperJob.textContent = t === 'job' ? 'Stop the current job first.' : (t ? 'End the current activity first.' : 'Nothing is running.');
-  if (helperBreak) helperBreak.textContent = t === 'break' ? 'You\'re already on a break.' : (t ? 'End the current activity first.' : 'Start a job first.');
+  if (helperBreak) helperBreak.textContent = t === 'break' ? "You're already on a break." : (t ? 'End the current activity first.' : 'Start a job first.');
   if (helperDrive) helperDrive.textContent = t === 'drive' ? 'Stop the drive first.' : (t ? 'End the current activity first.' : 'Nothing is running.');
 }
 
@@ -188,22 +188,23 @@ function renderTimeline() {
     <span class="lg break">Break</span>
     <span class="lg drive">Drive</span>
   </div>`;
-  const dots = todays.map(p => {
+  const rows = todays.map(p => {
     let cls = 'job';
     if (p.type.includes('Break')) cls = 'break';
     else if (p.type.includes('Drive')) cls = 'drive';
     const isCurrent = current && p.id === current.id;
     const isSelected = selectedId === p.id;
-    return `<div class="dot ${cls} ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}" data-id="${p.id}">
+    return `<div class="timeline-row ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}" data-id="${p.id}">
+      <div class="dot ${cls}"></div>
       <span class="time">${p.time}</span>
     </div>`;
-  }).join('') || '<p style="font-size:0.65rem;color:#64748b;text-align:center;padding:0.5rem">No punches</p>';
+  }).join('') || '<p style="font-size:0.65rem;color:#64748b;padding:0.5rem">No punches</p>';
 
-  timelineEl.innerHTML = legend + dots;
+  timelineEl.innerHTML = legend + rows;
 
-  timelineEl.querySelectorAll('.dot').forEach(dot => {
-    dot.onclick = () => {
-      selectedId = dot.dataset.id;
+  timelineEl.querySelectorAll('.timeline-row').forEach(row => {
+    row.onclick = () => {
+      selectedId = row.dataset.id;
       render();
     };
   });
