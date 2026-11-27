@@ -126,7 +126,7 @@ main {
   border-radius: 12px;
   padding: 0.8rem;
   flex: 1;
-  min-height: 120px;
+  min-height: 100px;
   overflow-y: auto;
 }
 .card h3 { margin: 0 0 0.4rem; font-size: 1rem; }
@@ -152,21 +152,33 @@ main {
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
-  margin-top: 0.4rem;
-  padding-top: 0.2rem;
+  gap: 0.5rem 0.4rem;
+  margin-top: 0.3rem;
   flex-shrink: 0;
   justify-items: center;
 }
+.action-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.helper {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  text-align: center;
+  min-height: 1.1em;
+  line-height: 1.1;
+}
 .action.ring {
-  width: 92px;
-  height: 92px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 4px solid #334155;
   background: #0f172a;
   color: #fff;
   font-weight: 800;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   line-height: 1.05;
   cursor: pointer;
   display: flex;
@@ -182,6 +194,29 @@ main {
 }
 .action.ring.oops {
   border-color: #1e3a5f;
+}
+.log-strip {
+  margin-top: 0.4rem;
+  flex-shrink: 0;
+}
+.log-strip .label {
+  margin-bottom: 0.3rem;
+}
+#today-log {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+.log-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #1e293b;
+  gap: 0.5rem;
+}
+.log-meta {
+  color: #64748b;
+  font-size: 0.65rem;
+  white-space: nowrap;
 }
 nav {
   display: flex;
