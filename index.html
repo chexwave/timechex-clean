@@ -9,7 +9,7 @@
 <body>
   <header>
     <h1>Time<span>Chex</span></h1>
-    <span class="version">v0.22</span>
+    <span class="version">v0.23</span>
   </header>
 
   <div class="status-bar" id="status-bar">
@@ -17,6 +17,8 @@
     <span id="status-text">Ready</span>
     <span id="timer">00:00:00</span>
   </div>
+
+  <div id="toast" class="toast hidden"></div>
 
   <main id="main">
     <!-- Punch view (default) -->
@@ -53,6 +55,10 @@
             <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
             <div class="helper" id="helper-oops">Manual punch</div>
           </div>
+        </div>
+        <div class="add-row">
+          <button id="btn-add-part" class="add-btn">Add part</button>
+          <button id="btn-add-note" class="add-btn">Add note</button>
         </div>
         <div class="log-strip">
           <div class="label">TODAY'S LOG</div>
