@@ -171,8 +171,8 @@ document.getElementById('edit-save').onclick = () => {
 
 function renderTimeline() {
   if (!timelineEl) return;
-  const todays = store.getTodayPunches().slice().reverse();
-  const current = todays[0];
+  const todays = store.getTodayPunches().slice(); // oldest first
+  const current = todays[todays.length - 1]; // newest is last
   const legend = `<div class="legend">
     <span class="lg job">Job</span>
     <span class="lg break">Break</span>
