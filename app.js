@@ -18,6 +18,7 @@ const jobSub = document.getElementById('job-sub');
 const modal = document.getElementById('modal');
 const editModal = document.getElementById('edit-modal');
 const ticketContent = document.getElementById('ticket-content');
+const todayLog = document.getElementById('today-log');
 
 const btnJob = document.getElementById('btn-job');
 const btnBreak = document.getElementById('btn-break');
@@ -25,6 +26,10 @@ const btnDrive = document.getElementById('btn-drive');
 const btnOops = document.getElementById('btn-oops');
 const btnUndo = document.getElementById('btn-undo');
 const btnExport = document.getElementById('btn-export');
+
+const helperJob = document.getElementById('helper-job');
+const helperBreak = document.getElementById('helper-break');
+const helperDrive = document.getElementById('helper-drive');
 
 function getJobLabel(wo) {
   const job = MOCK_JOBS.find(j => j.number === wo);
@@ -92,6 +97,10 @@ function updateStatus() {
     btnDrive.innerHTML = t === 'drive' ? 'STOP<br>DRIVE' : 'START<br>DRIVE';
     btnDrive.classList.toggle('active', t === 'drive');
   }
+
+  if (helperJob) helperJob.textContent = t === 'job' ? 'Stop the current job first.' : '';
+  if (helperBreak) helperBreak.textContent = t === 'break' ? 'You\'re already on a break.' : (t ? 'End the current activity first.' : '');
+  if (helperDrive) helperDrive.textContent = t === 'drive' ? 'Stop the drive first.' : (t ? 'End the current activity first.' : '');
 }
 
 function toggle(type, startLabel, stopLabel) {
@@ -191,6 +200,14 @@ function renderTimeline() {
   });
 }
 
+function renderLog() {
+  if (!todayLog) return;
+  const todays = store.getTodayPunches().slice().reverse().slice(0, 6);
+  todayLog.innerHTML = todays.map(p =>
+    `<div class="log-row"><span>${p.time} · ${p.type}</span><span class="log-meta">${p.wo || ''} · ${p.customer || ''}</span></div>`
+  ).join('') || '<div class="log-row">No punches yet</div>';
+}
+
 function calcDuration(start, end) {
   const [sh, sm] = start.split(':').map(Number);
   const [eh, em] = end.split(':').map(Number);
@@ -261,7 +278,6 @@ function renderCard() {
       <p>Parts: ${(current.parts || []).join(', ') || 'none'} <button id="add-part" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Part</button></p>
       <p>Notes: ${current.notes || 'none'} <button id="add-note" style="margin-left:0.3rem;padding:0.2rem 0.5rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">+ Note</button></p>
       ${current.distance ? `<p>Distance: ${current.distance} mi</p>` : ''}
-      <div class="ranges">${store.state.sheets.find(s => s.iso === today)?.ranges.map(r => `<div>${r.start}–${r.end} · ${r.type}</div>`).join('') || 'No closed ranges yet'}</div>
     `;
     document.getElementById('add-part').onclick = () => {
       const part = prompt('Part?');
@@ -303,11 +319,11 @@ function render() {
   if (currentView === 'punch') {
     renderTimeline();
     renderCard();
+    renderLog();
     updateStatus();
   } else if (currentView === 'ticket') {
     renderTicket();
   }
-  // month/summary are static for now
 }
 
 if (store.state.punches.length === 0) {
