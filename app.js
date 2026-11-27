@@ -324,11 +324,14 @@ function render() {
   }
 }
 
+// Clean chronological seed (only if empty)
 if (store.state.punches.length === 0) {
-  store.addPunch('Start Job', { time: '09:15' });
-  store.addPunch('Stop Job', { time: '11:30' });
-  store.addPunch('Start Break', { time: '12:00' });
-  store.state.activeType = 'break';
+  store.addPunch('Start Job', { time: '08:15' });
+  store.addPunch('Stop Job', { time: '09:30' });
+  store.addPunch('Start Break', { time: '09:35' });
+  store.addPunch('Stop Break', { time: '09:50' });
+  store.addPunch('Start Job', { time: '09:52' });
+  store.state.activeType = 'job';
   store.persist();
 }
 
