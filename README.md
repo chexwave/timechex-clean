@@ -1,24 +1,23 @@
 # TimeChex Clean
 
-Refined punch-to-timesheet app for American Outboard Motors.
+Interactive Punch screen for American Outboard Motors.
 
-**Status:** Public repo started. Client-first. Mock data only.
+**Live concept:** Vertical timeline of timestamp dots + Current/Selected Punch cards + always-visible toggle action buttons.
 
-## Locked contracts
-- Punch ID: food + animal + MMDD (e.g. `nachoparrot1126`) — attachment key to CRM jobs
-- Labor rates: Tech $125/hr, Bench $100/hr, Sea Trial $150/hr, Travel $2.50/one-way mile
-- Arcade punch buttons stay exactly as-is (Start Job / Stop Job / Start Break / End Break)
+## Features built
+- Vertical left timeline (dots = timestamps)
+- **Current Punch** card (active): timestamp, job, parts (+add), notes (+add)
+- **Selected Punch** card (other dots): summary + Edit
+- Four always-on buttons that toggle:
+  - Start Job ↔ Stop Job
+  - Start Break ↔ Stop Break
+  - Start Drive ↔ Stop Drive (logged as Service with time + distance)
+  - Oops Punch (popup for Time, Type, Job, Notes, Parts)
+- Mock data, punch IDs (food+animal+MMDD), localStorage
 
-## Mock data
-See `src/mock-data.js` — customers (Rivera/Scout, Hale/Sea Ray, etc.), jobs, parts, rates, sample punches.
+## Run
+Open `index.html` locally or enable GitHub Pages (Settings → Pages → main branch / root).
 
-## Current demo
-`index.html` is a static punch demo that generates punch IDs and stores them in localStorage. Open it locally or via GitHub Pages once enabled.
+https://github.com/chexwave/timechex-clean
 
-## Next
-1. Refine punch-to-timesheet flow (attach, ranges, clean export)
-2. Enable GitHub Pages
-3. Capacitor Android wrap
-4. Wire to https://chexwave.github.io/aom-crm-clean/ by punch ID / job number
-
-Based on the private `timechex-v2` lineage. Nothing is done until the punch flow feels finished.
+Next: full edit menu for Selected Punch, distance capture on Drive, timesheet export.
