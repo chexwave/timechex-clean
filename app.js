@@ -172,14 +172,24 @@ document.getElementById('edit-save').onclick = () => {
 function renderTimeline() {
   if (!timelineEl) return;
   const todays = store.getTodayPunches().slice().reverse();
-  timelineEl.innerHTML = todays.map(p => {
+  const current = todays[0];
+  const legend = `<div class="legend">
+    <span class="lg job">Job</span>
+    <span class="lg break">Break</span>
+    <span class="lg drive">Drive</span>
+  </div>`;
+  const dots = todays.map(p => {
     let cls = 'job';
     if (p.type.includes('Break')) cls = 'break';
     else if (p.type.includes('Drive')) cls = 'drive';
-    return `<div class="dot ${cls} ${selectedId === p.id ? 'selected' : ''}" data-id="${p.id}">
+    const isCurrent = current && p.id === current.id;
+    const isSelected = selectedId === p.id;
+    return `<div class="dot ${cls} ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}" data-id="${p.id}">
       <span class="time">${p.time}</span>
     </div>`;
-  }).join('') || '<p style="font-size:0.7rem;color:#64748b;text-align:center">No punches</p>';
+  }).join('') || '<p style="font-size:0.65rem;color:#64748b;text-align:center;padding:0.5rem">No punches</p>';
+
+  timelineEl.innerHTML = legend + dots;
 
   timelineEl.querySelectorAll('.dot').forEach(dot => {
     dot.onclick = () => {
