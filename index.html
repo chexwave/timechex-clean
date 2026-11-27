@@ -38,10 +38,26 @@
         </div>
         <div id="punch-card" class="card"></div>
         <div class="actions">
-          <button id="btn-job" class="action ring">START<br>JOB</button>
-          <button id="btn-break" class="action ring">START<br>BREAK</button>
-          <button id="btn-drive" class="action ring">START<br>DRIVE</button>
-          <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
+          <div class="action-wrap">
+            <button id="btn-job" class="action ring">START<br>JOB</button>
+            <div class="helper" id="helper-job"></div>
+          </div>
+          <div class="action-wrap">
+            <button id="btn-break" class="action ring">START<br>BREAK</button>
+            <div class="helper" id="helper-break"></div>
+          </div>
+          <div class="action-wrap">
+            <button id="btn-drive" class="action ring">START<br>DRIVE</button>
+            <div class="helper" id="helper-drive"></div>
+          </div>
+          <div class="action-wrap">
+            <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
+            <div class="helper" id="helper-oops">Manual punch</div>
+          </div>
+        </div>
+        <div class="log-strip">
+          <div class="label">TODAY'S LOG</div>
+          <div id="today-log"></div>
         </div>
       </section>
     </div>
