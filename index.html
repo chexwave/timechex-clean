@@ -10,6 +10,7 @@
   <header>
     <h1>Time<span>Chex</span></h1>
     <div class="status" id="status">Ready</div>
+    <button id="btn-undo" style="margin-left:0.5rem;padding:0.3rem 0.6rem;border-radius:6px;border:none;background:#334155;color:#fff;font-size:0.75rem">Undo</button>
   </header>
 
   <div class="status-bar" id="status-bar">
@@ -18,41 +19,55 @@
     <span id="timer">00:00:00</span>
   </div>
 
-  <main>
-    <aside class="timeline" id="timeline"></aside>
-
-    <section class="content">
-      <div class="employee">
-        <div>
-          <div class="label">EMPLOYEE</div>
-          <div class="name">Michael</div>
-          <div class="sub" id="job-sub">No active job</div>
+  <main id="main">
+    <!-- Punch view (default) -->
+    <div id="view-punch">
+      <aside class="timeline" id="timeline"></aside>
+      <section class="content">
+        <div class="employee">
+          <div>
+            <div class="label">EMPLOYEE</div>
+            <div class="name">Michael</div>
+            <div class="sub" id="job-sub">No active job</div>
+          </div>
+          <div class="date-block">
+            <div class="label">DATE</div>
+            <div class="date" id="date"></div>
+            <div class="clock" id="clock"></div>
+          </div>
         </div>
-        <div class="date-block">
-          <div class="label">DATE</div>
-          <div class="date" id="date"></div>
-          <div class="clock" id="clock"></div>
+        <div id="punch-card" class="card"></div>
+        <div class="actions">
+          <button id="btn-job" class="action ring">START<br>JOB</button>
+          <button id="btn-break" class="action ring">START<br>BREAK</button>
+          <button id="btn-drive" class="action ring">START<br>DRIVE</button>
+          <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
         </div>
-      </div>
+      </section>
+    </div>
 
-      <div id="punch-card" class="card"></div>
+    <!-- Ticket view -->
+    <div id="view-ticket" class="hidden">
+      <section class="content" style="width:100%">
+        <h2>Today's Timesheet</h2>
+        <div id="ticket-content" class="card"></div>
+        <button id="btn-export" class="primary" style="margin-top:1rem;padding:0.6rem 1.2rem;border-radius:8px;border:none;background:#2563eb;color:#fff">Export by Punch ID</button>
+      </section>
+    </div>
 
-      <div class="actions">
-        <button id="btn-job" class="action ring">START<br>JOB</button>
-        <button id="btn-break" class="action ring">START<br>BREAK</button>
-        <button id="btn-drive" class="action ring">START<br>DRIVE</button>
-        <button id="btn-oops" class="action ring oops">OOPS<br>PUNCH</button>
-      </div>
-    </section>
+    <!-- Placeholders -->
+    <div id="view-month" class="hidden"><section class="content"><h2>Month</h2><p>Coming in next cut. Past sheets will land here.</p></section></div>
+    <div id="view-summary" class="hidden"><section class="content"><h2>Summary</h2><p>Coming in next cut. Totals and rates will land here.</p></section></div>
   </main>
 
   <nav>
-    <span class="active">Punch</span>
-    <span>Ticket</span>
-    <span>Month</span>
-    <span>Summary</span>
+    <span data-view="punch" class="active">Punch</span>
+    <span data-view="ticket">Ticket</span>
+    <span data-view="month">Month</span>
+    <span data-view="summary">Summary</span>
   </nav>
 
+  <!-- Oops modal -->
   <div id="modal" class="modal hidden">
     <div class="modal-content">
       <h3>Oops Punch</h3>
@@ -69,10 +84,37 @@
       </label>
       <label>Job <select id="oops-job"></select></label>
       <label>Notes <textarea id="oops-notes" rows="2"></textarea></label>
-      <label>Parts <input id="oops-parts" placeholder="part numbers"></label>
+      <label>Parts <input id="oops-parts" placeholder="part numbers, comma separated"></label>
+      <label>Distance (mi, for Drive) <input type="number" id="oops-distance" step="0.1" value="0"></label>
       <div class="modal-actions">
         <button id="oops-cancel">Cancel</button>
         <button id="oops-save" class="primary">Add Punch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="edit-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Punch</h3>
+      <label>Time <input type="time" id="edit-time"></label>
+      <label>Type
+        <select id="edit-type">
+          <option>Start Job</option>
+          <option>Stop Job</option>
+          <option>Start Break</option>
+          <option>Stop Break</option>
+          <option>Start Drive</option>
+          <option>Stop Drive</option>
+        </select>
+      </label>
+      <label>Job <select id="edit-job"></select></label>
+      <label>Notes <textarea id="edit-notes" rows="2"></textarea></label>
+      <label>Parts <input id="edit-parts" placeholder="part numbers"></label>
+      <label>Distance (mi) <input type="number" id="edit-distance" step="0.1" value="0"></label>
+      <div class="modal-actions">
+        <button id="edit-cancel">Cancel</button>
+        <button id="edit-save" class="primary">Save</button>
       </div>
     </div>
   </div>
