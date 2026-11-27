@@ -1,6 +1,6 @@
 import { generatePunchId, MOCK_JOBS, MOCK_CUSTOMERS, LABOR_RATES } from './mock-data.js';
 
-const KEY = 'timechex-clean-v2';
+const KEY = 'timechex-clean-v3';
 
 function load() {
   try {
@@ -69,7 +69,6 @@ export const store = {
   },
 
   rebuildSheets() {
-    // Simple range builder from sequential punches (port of old idea)
     const byDay = {};
     for (const p of this.state.punches) {
       if (!byDay[p.iso]) byDay[p.iso] = [];
