@@ -9,7 +9,6 @@ let editingPunch = null;
 
 const timelineEl = document.getElementById('timeline');
 const cardEl = document.getElementById('punch-card');
-const statusEl = document.getElementById('status');
 const statusText = document.getElementById('status-text');
 const timerEl = document.getElementById('timer');
 const dateEl = document.getElementById('date');
@@ -24,7 +23,6 @@ const btnJob = document.getElementById('btn-job');
 const btnBreak = document.getElementById('btn-break');
 const btnDrive = document.getElementById('btn-drive');
 const btnOops = document.getElementById('btn-oops');
-const btnUndo = document.getElementById('btn-undo');
 const btnExport = document.getElementById('btn-export');
 
 const helperJob = document.getElementById('helper-job');
@@ -64,22 +62,18 @@ function stopTimer() {
 function updateStatus() {
   const t = store.state.activeType;
   if (t === 'job') {
-    statusEl.textContent = 'On the job';
-    statusText.textContent = 'On the job · Rivera';
-    if (jobSub) jobSub.textContent = 'On the job · Rivera · since now';
+    statusText.textContent = 'On the job';
+    if (jobSub) jobSub.textContent = 'On the job · Rivera';
     startTimer();
   } else if (t === 'break') {
-    statusEl.textContent = 'On break';
     statusText.textContent = 'On break';
     if (jobSub) jobSub.textContent = 'On break';
     startTimer();
   } else if (t === 'drive') {
-    statusEl.textContent = 'Driving';
     statusText.textContent = 'Driving';
     if (jobSub) jobSub.textContent = 'Driving';
     startTimer();
   } else {
-    statusEl.textContent = 'Ready';
     statusText.textContent = 'Ready';
     if (jobSub) jobSub.textContent = 'No active job';
     stopTimer();
@@ -98,9 +92,9 @@ function updateStatus() {
     btnDrive.classList.toggle('active', t === 'drive');
   }
 
-  if (helperJob) helperJob.textContent = t === 'job' ? 'Stop the current job first.' : '';
-  if (helperBreak) helperBreak.textContent = t === 'break' ? 'You\'re already on a break.' : (t ? 'End the current activity first.' : '');
-  if (helperDrive) helperDrive.textContent = t === 'drive' ? 'Stop the drive first.' : (t ? 'End the current activity first.' : '');
+  if (helperJob) helperJob.textContent = t === 'job' ? 'Stop the current job first.' : (t ? 'End the current activity first.' : 'Nothing is running.');
+  if (helperBreak) helperBreak.textContent = t === 'break' ? 'You\'re already on a break.' : (t ? 'End the current activity first.' : 'Start a job first.');
+  if (helperDrive) helperDrive.textContent = t === 'drive' ? 'Stop the drive first.' : (t ? 'End the current activity first.' : 'Nothing is running.');
 }
 
 function toggle(type, startLabel, stopLabel) {
@@ -173,11 +167,6 @@ document.getElementById('edit-save').onclick = () => {
   store.persist();
   editModal.classList.add('hidden');
   render();
-};
-
-if (btnUndo) btnUndo.onclick = () => {
-  if (store.undo()) render();
-  else alert('Nothing to undo');
 };
 
 function renderTimeline() {
@@ -257,7 +246,6 @@ function renderCard() {
   const todays = store.getTodayPunches();
   const current = todays.slice(-1)[0];
   const selected = store.state.punches.find(p => p.id === selectedId);
-  const today = new Date().toISOString().slice(0, 10);
 
   if (selected && selected.id !== current?.id) {
     cardEl.innerHTML = `
