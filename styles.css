@@ -443,3 +443,25 @@ button { font-family: inherit; }
 .sheet-list { margin: 0.5rem 0; }
 .total-row { display: flex; justify-content: space-between; border-top: 2px solid #ef4444; padding: 0.6rem 0; font-weight: 700; }
 .primary { background: #ef4444; color: #fff; border: none; padding: 0.7rem 1rem; border-radius: 10px; font-weight: 700; width: 100%; margin: 0.5rem 0; cursor: pointer; }
+
+/* Ticket v0.30 editable ranges */
+.ticket-header { margin-bottom: 1rem; }
+.day-nav { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.day-pill { background: #1e293b; border: 1px solid #334155; color: #cbd5e1; border-radius: 999px; padding: 0.25rem 0.7rem; font-size: 0.75rem; cursor: pointer; }
+.day-pill.on { background: #ef4444; border-color: #ef4444; color: #fff; }
+.big-hours { font-size: 2.4rem; font-weight: 700; color: #f8fafc; }
+.big-hours span { font-size: 1.2rem; color: #94a3b8; }
+.wo-line { color: #94a3b8; font-size: 0.9rem; margin-top: 0.2rem; }
+.range-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 0.7rem; margin-bottom: 0.6rem; }
+.range-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+.range-head .hrs { color: #f87171; font-weight: 600; }
+.range-times { display: flex; gap: 0.8rem; }
+.range-times label { flex: 1; font-size: 0.75rem; color: #94a3b8; }
+.range-times input[type=time] { width: 100%; background: #1e293b; border: 1px solid #334155; color: #f1f5f9; border-radius: 6px; padding: 0.3rem; }
+.trash { background: transparent; border: none; color: #f87171; font-size: 1.2rem; cursor: pointer; padding: 0 0.4rem; }
+.sheet-note { display: block; margin: 0.8rem 0; }
+.sheet-note textarea { width: 100%; background: #0f172a; border: 1px solid #1e293b; color: #e2e8f0; border-radius: 8px; padding: 0.5rem; margin-top: 0.3rem; }
+.ticket-actions { display: flex; gap: 0.6rem; margin-top: 0.5rem; }
+.ticket-actions button { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+.ticket-actions .primary { background: #ef4444; color: #fff; }
+.ticket-actions button:not(.primary) { background: #1e293b; color: #e2e8f0; }
