@@ -410,7 +410,28 @@ button { font-family: inherit; }
 .cal-day.on .badge { background: #0f172a; color: #ef4444; }
 .cal-day .hrs { font-size: 0.55rem; color: #94a3b8; }
 .cal-day.on .hrs { color: #fff; }
-.day-detail { margin-top: 0.5rem; }
+.day-detail {
+  margin-top: 0.75rem;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.day-detail h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+.day-detail .sheet-row {
+  padding: 0.45rem 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #334155;
+}
+.day-detail .sheet-row:last-child { border-bottom: none; }
+.day-detail .sheet-row strong { color: #f1f5f9; }
+.day-detail .muted { color: #94a3b8; font-size: 0.75rem; }
 .sheet-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #1e293b; font-size: 0.8rem; }
 .muted { color: #64748b; font-size: 0.8rem; }
 
