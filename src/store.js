@@ -82,7 +82,7 @@ export const store = {
         if (p.type.startsWith('Start')) {
           open = { start: p.time, type: p.type.includes('Break') ? 'break' : p.type.includes('Drive') ? 'drive' : 'main', punchId: p.id, wo: p.wo };
         } else if (p.type.startsWith('Stop') && open) {
-          ranges.push({ ...open, end: p.time, note: p.notes || '' });
+          ranges.push({ ...open, end: p.time, endPunchId: p.id, note: p.notes || '' });
           open = null;
         }
       }
