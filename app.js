@@ -1,11 +1,18 @@
 import { store } from './src/store.js';
-import { MOCK_JOBS, MOCK_CUSTOMERS } from './src/mock-data.js';
+import { MOCK_JOBS, MOCK_CUSTOMERS, LABOR_RATES } from './src/mock-data.js';
 
 let selectedId = null;
 let currentView = 'punch';
 let timerStart = null;
 let timerInterval = null;
 let editingPunch = null;
+let monthYear = new Date().getFullYear();
+let monthIndex = new Date().getMonth();
+let selectedIso = new Date().toISOString().slice(0, 10);
+let summaryFrom = new Date(Date.now() - 7*86400000).toISOString().slice(0, 10);
+let summaryTo = new Date().toISOString().slice(0, 10);
+let summaryCustomer = 'all';
+let summaryWork = 'all';
 
 const timelineEl = document.getElementById('timeline');
 const cardEl = document.getElementById('punch-card');
@@ -19,6 +26,8 @@ const editModal = document.getElementById('edit-modal');
 const ticketContent = document.getElementById('ticket-content');
 const todayLog = document.getElementById('today-log');
 const toastEl = document.getElementById('toast');
+const monthContent = document.getElementById('month-content');
+const summaryContent = document.getElementById('summary-content');
 
 const btnJob = document.getElementById('btn-job');
 const btnBreak = document.getElementById('btn-break');
@@ -224,6 +233,20 @@ function calcDuration(start, end) {
   return ((eh * 60 + em) - (sh * 60 + sm)) / 60;
 }
 
+function sheetMinutes(ranges) {
+  let mins = 0;
+  for (const r of ranges) {
+    if (!r.start || !r.end) continue;
+    const d = (calcDuration(r.start, r.end) * 60);
+    mins += r.type === 'break' ? -d : d;
+  }
+  return Math.max(0, mins);
+}
+
+function formatHours(mins) {
+  return (mins / 60).toFixed(2);
+}
+
 function renderTicket() {
   if (!ticketContent) return;
   const today = new Date().toISOString().slice(0, 10);
@@ -336,6 +359,101 @@ document.querySelectorAll('nav span').forEach(span => {
   span.onclick = () => switchView(span.dataset.view);
 });
 
+function renderMonth() {
+  if (!monthContent) return;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const firstDow = new Date(monthYear, monthIndex, 1).getDay();
+  const count = new Date(monthYear, monthIndex + 1, 0).getDate();
+  const today = new Date().toISOString().slice(0, 10);
+
+  let cells = '';
+  for (let d = 1; d <= count; d++) {
+    const iso = `${monthYear}-${String(monthIndex + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const daySheets = store.state.sheets.filter(s => s.iso === iso);
+    const mins = daySheets.reduce((sum, s) => sum + sheetMinutes(s.ranges), 0);
+    const punchCount = daySheets.length;
+    const on = iso === selectedIso;
+    cells += `<button class="cal-day ${on ? 'on' : ''} ${punchCount > 0 && !on ? 'has' : ''}" data-iso="${iso}">
+      ${punchCount > 0 ? `<span class="badge">${punchCount}</span>` : ''}
+      <span class="daynum">${d}</span>
+      ${mins > 0 ? `<span class="hrs">${formatHours(mins)}</span>` : ''}
+    </button>`;
+  }
+
+  const selectedSheets = store.state.sheets.filter(s => s.iso === selectedIso);
+  const dayList = selectedSheets.map(s => {
+    const hrs = formatHours(sheetMinutes(s.ranges));
+    return `<div class="sheet-row"><strong>${s.wo || 'WO'}</strong> · ${hrs}h</div>`;
+  }).join('') || '<p class="muted">No sheets this day.</p>';
+
+  monthContent.innerHTML = `
+    <div class="month-header">
+      <button id="prev-month">‹</button>
+      <h2>${months[monthIndex]} ${monthYear}</h2>
+      <button id="next-month">›</button>
+    </div>
+    <div class="workday-nav">
+      <button id="prev-work">Prev work day</button>
+      <button id="today-btn">Today</button>
+      <button id="next-work">Next work day</button>
+    </div>
+    <div class="cal-grid">
+      <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+      ${Array(firstDow).fill('<div></div>').join('')}
+      ${cells}
+    </div>
+    <div class="day-detail">
+      <h3>${selectedIso}</h3>
+      ${dayList}
+    </div>
+  `;
+
+  document.getElementById('prev-month').onclick = () => { monthIndex--; if (monthIndex < 0) { monthIndex = 11; monthYear--; } render(); };
+  document.getElementById('next-month').onclick = () => { monthIndex++; if (monthIndex > 11) { monthIndex = 0; monthYear++; } render(); };
+  document.getElementById('today-btn').onclick = () => { selectedIso = today; monthYear = new Date().getFullYear(); monthIndex = new Date().getMonth(); render(); };
+  document.querySelectorAll('.cal-day').forEach(btn => {
+    btn.onclick = () => { selectedIso = btn.dataset.iso; render(); };
+  });
+}
+
+function renderSummary() {
+  if (!summaryContent) return;
+  const sheets = store.state.sheets.filter(s => s.iso >= summaryFrom && s.iso <= summaryTo);
+  const totalMins = sheets.reduce((sum, s) => sum + sheetMinutes(s.ranges), 0);
+  const totalHrs = formatHours(totalMins);
+
+  const rows = sheets.map(s => {
+    const hrs = formatHours(sheetMinutes(s.ranges));
+    return `<div class="sheet-row"><span>${s.iso.slice(5)} · ${s.wo || ''}</span><span>${hrs}</span></div>`;
+  }).join('') || '<p class="muted">Nothing in this range.</p>';
+
+  summaryContent.innerHTML = `
+    <h2>Summary</h2>
+    <div class="filters">
+      <label>From <input type="date" id="sum-from" value="${summaryFrom}"></label>
+      <label>To <input type="date" id="sum-to" value="${summaryTo}"></label>
+    </div>
+    <div class="big-total">${totalHrs}h</div>
+    <p class="muted">${sheets.length} sheets · ${summaryFrom} → ${summaryTo}</p>
+    <button id="export-csv" class="primary">Export CSV</button>
+    <div class="sheet-list">${rows}</div>
+    <div class="total-row"><strong>Total</strong><strong>${totalHrs}h</strong></div>
+  `;
+
+  document.getElementById('sum-from').onchange = e => { summaryFrom = e.target.value; render(); };
+  document.getElementById('sum-to').onchange = e => { summaryTo = e.target.value; render(); };
+  document.getElementById('export-csv').onclick = () => {
+    const csv = 'Date,WO,Hours\n' + sheets.map(s => `${s.iso},${s.wo || ''},${formatHours(sheetMinutes(s.ranges))}`).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `timechex-${summaryFrom}-to-${summaryTo}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+}
+
 function render() {
   updateClock();
   if (currentView === 'punch') {
@@ -345,6 +463,10 @@ function render() {
     updateStatus();
   } else if (currentView === 'ticket') {
     renderTicket();
+  } else if (currentView === 'month') {
+    renderMonth();
+  } else if (currentView === 'summary') {
+    renderSummary();
   }
 }
 

@@ -395,3 +395,30 @@ nav .active { color: #fff; font-weight: 600; }
 .modal-actions button { padding: 0.4rem 0.8rem; border-radius: 8px; border: none; background: #334155; color: #fff; }
 .modal-actions .primary { background: #2563eb; }
 button { font-family: inherit; }
+
+/* Month calendar */
+.month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.month-header button { background: #1e293b; border: none; color: #fff; width: 40px; height: 40px; border-radius: 8px; font-size: 1.2rem; }
+.workday-nav { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+.workday-nav button { flex: 1; background: #1e293b; border: 1px solid #334155; color: #fff; padding: 0.5rem; border-radius: 8px; font-size: 0.75rem; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 1rem; }
+.dow { text-align: center; font-size: 0.6rem; color: #64748b; font-weight: 600; }
+.cal-day { position: relative; aspect-ratio: 1; background: #1e293b; border: 1px solid #334155; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-size: 0.75rem; cursor: pointer; }
+.cal-day.on { background: #ef4444; border-color: #ef4444; }
+.cal-day.has { border-color: #ef4444; }
+.cal-day .badge { position: absolute; top: 2px; right: 2px; background: #ef4444; color: #fff; font-size: 0.55rem; border-radius: 999px; min-width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
+.cal-day.on .badge { background: #0f172a; color: #ef4444; }
+.cal-day .hrs { font-size: 0.55rem; color: #94a3b8; }
+.cal-day.on .hrs { color: #fff; }
+.day-detail { margin-top: 0.5rem; }
+.sheet-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #1e293b; font-size: 0.8rem; }
+.muted { color: #64748b; font-size: 0.8rem; }
+
+/* Summary */
+.filters { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
+.filters label { flex: 1; font-size: 0.7rem; color: #94a3b8; }
+.filters input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 0.4rem; border-radius: 6px; }
+.big-total { font-size: 2rem; font-weight: 700; margin: 0.5rem 0; }
+.sheet-list { margin: 0.5rem 0; }
+.total-row { display: flex; justify-content: space-between; border-top: 2px solid #fff; padding: 0.6rem 0; font-weight: 700; }
+.primary { background: #ef4444; color: #fff; border: none; padding: 0.7rem 1rem; border-radius: 10px; font-weight: 700; width: 100%; margin: 0.5rem 0; cursor: pointer; }

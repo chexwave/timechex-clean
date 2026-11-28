@@ -9,7 +9,7 @@
 <body>
   <header>
     <h1>Time<span>Chex</span></h1>
-    <span class="version">v0.27</span>
+    <span class="version">v0.28</span>
   </header>
 
   <div class="status-bar" id="status-bar">
@@ -76,9 +76,19 @@
       </section>
     </div>
 
-    <!-- Placeholders -->
-    <div id="view-month" class="hidden"><section class="content"><h2>Month</h2><p>Coming in next cut. Past sheets will land here.</p></section></div>
-    <div id="view-summary" class="hidden"><section class="content"><h2>Summary</h2><p>Coming in next cut. Totals and rates will land here.</p></section></div>
+    <!-- Month view -->
+    <div id="view-month" class="hidden">
+      <section class="content" style="width:100%">
+        <div id="month-content"></div>
+      </section>
+    </div>
+
+    <!-- Summary view -->
+    <div id="view-summary" class="hidden">
+      <section class="content" style="width:100%">
+        <div id="summary-content"></div>
+      </section>
+    </div>
   </main>
 
   <nav>
